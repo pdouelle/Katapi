@@ -1,5 +1,5 @@
 using Application.Products;
-using Application.Products.Queries;
+using Application.Products.Queries.GetProducts;
 using Domain.Common;
 using Domain.Entities;
 using Mapster;

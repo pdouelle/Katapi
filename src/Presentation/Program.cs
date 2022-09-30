@@ -32,8 +32,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-namespace Presentation
-{
-    public partial class Program { }
-}

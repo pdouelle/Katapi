@@ -17,7 +17,7 @@ using Xunit;
 
 namespace Application.IntegrationTests.XUnit;
 
-public sealed class KatapiFactory : WebApplicationFactory<Program>, IAsyncLifetime
+public sealed class KatapiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
 {
     private static IServiceScopeFactory _scopeFactory = null!;
     private static PostgreSqlTestcontainer _container = null!;
