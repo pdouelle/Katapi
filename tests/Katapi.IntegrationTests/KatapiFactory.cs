@@ -20,12 +20,12 @@ namespace Application.IntegrationTests.XUnit;
 public sealed class KatapiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private static IServiceScopeFactory _scopeFactory = null!;
-    private static PostgreSqlTestcontainer _dbContainer = null!;
+    private static PostgreSqlTestcontainer _container = null!;
     private static Checkpoint _checkpoint = null!;
 
     public async Task InitializeAsync()
     {
-        _dbContainer = new TestcontainersBuilder<PostgreSqlTestcontainer>()
+        _container = new TestcontainersBuilder<PostgreSqlTestcontainer>()
             .WithDatabase(new PostgreSqlTestcontainerConfiguration
             {
                 Database = "db",
@@ -33,7 +33,7 @@ public sealed class KatapiFactory : WebApplicationFactory<Program>, IAsyncLifeti
                 Password = "postgres",
             }).Build();
 
-        await _dbContainer.StartAsync();
+        await _container.StartAsync();
 
         _scopeFactory = Services.GetRequiredService<IServiceScopeFactory>();
 
@@ -47,13 +47,13 @@ public sealed class KatapiFactory : WebApplicationFactory<Program>, IAsyncLifeti
             TablesToIgnore = new Table[] { "__EFMigrationsHistory" }
         };
     }
-    
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
-            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(_dbContainer.ConnectionString));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(_container.ConnectionString));
         });
     }
 
@@ -68,7 +68,7 @@ public sealed class KatapiFactory : WebApplicationFactory<Program>, IAsyncLifeti
 
     public static async Task ResetState()
     {
-        var defaultConnection = _dbContainer.ConnectionString;
+        var defaultConnection = _container.ConnectionString;
 
         await using var conn = new NpgsqlConnection(defaultConnection);
 
@@ -86,7 +86,7 @@ public sealed class KatapiFactory : WebApplicationFactory<Program>, IAsyncLifeti
 
         return await context.FindAsync<TEntity>(keyValues);
     }
-    
+
     public static async Task AddAsync<TEntity>(TEntity entity)
         where TEntity : class
     {
@@ -98,7 +98,7 @@ public sealed class KatapiFactory : WebApplicationFactory<Program>, IAsyncLifeti
 
         await context.SaveChangesAsync();
     }
-    
+
     public static async Task AddRangeAsync<TEntity>(IEnumerable<TEntity> entities)
         where TEntity : class
     {
@@ -110,7 +110,7 @@ public sealed class KatapiFactory : WebApplicationFactory<Program>, IAsyncLifeti
 
         await context.SaveChangesAsync();
     }
-    
+
     public static async Task<int> CountAsync<TEntity>() where TEntity : class
     {
         using IServiceScope scope = _scopeFactory.CreateScope();
@@ -119,9 +119,9 @@ public sealed class KatapiFactory : WebApplicationFactory<Program>, IAsyncLifeti
 
         return await context.Set<TEntity>().CountAsync();
     }
-    
+
     public new async Task DisposeAsync()
     {
-        await _dbContainer.StopAsync();
+        await _container.StopAsync();
     }
 }

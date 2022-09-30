@@ -20,8 +20,4 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
         base.OnModelCreating(modelBuilder);
     }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-    }
 }
