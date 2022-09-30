@@ -11,11 +11,10 @@ public static class ConfigureServices
     {
         var defaultConnection = configuration.GetConnectionString("DefaultConnection");
 
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(defaultConnection, builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+        services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(defaultConnection));
 
-        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-        
+        services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+
         services.AddScoped<ApplicationDbContextInitialiser>();
 
         return services;

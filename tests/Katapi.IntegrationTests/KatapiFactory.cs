@@ -2,41 +2,40 @@
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using MediatR;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
-using NUnit.Framework;
 using Persistance;
+using Presentation;
 using Respawn;
 using Respawn.Graph;
+using Xunit;
 
-namespace Application.IntegrationTests;
+namespace Application.IntegrationTests.XUnit;
 
-[SetUpFixture]
-public partial class Testing
+public sealed class KatapiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private static WebApplicationFactory<Program> _factory = null!;
     private static IServiceScopeFactory _scopeFactory = null!;
+    private static PostgreSqlTestcontainer _dbContainer = null!;
     private static Checkpoint _checkpoint = null!;
-    private static TestcontainerDatabase _container = null!;
 
-    [OneTimeSetUp]
-    public async Task RunBeforeAnyTests()
+    public async Task InitializeAsync()
     {
-        _factory = new CustomWebApplicationFactory();
-
-        _container = new TestcontainersBuilder<PostgreSqlTestcontainer>()
+        _dbContainer = new TestcontainersBuilder<PostgreSqlTestcontainer>()
             .WithDatabase(new PostgreSqlTestcontainerConfiguration
             {
                 Database = "db",
                 Username = "postgres",
                 Password = "postgres",
-            })
-            .Build();
-        await _container.StartAsync();
+            }).Build();
 
-        _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
+        await _dbContainer.StartAsync();
+
+        _scopeFactory = Services.GetRequiredService<IServiceScopeFactory>();
 
         _checkpoint = new Checkpoint
         {
@@ -48,8 +47,15 @@ public partial class Testing
             TablesToIgnore = new Table[] { "__EFMigrationsHistory" }
         };
     }
-
-    public static string ContainerConnectionString() => _container.ConnectionString;
+    
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureTestServices(services =>
+        {
+            services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(_dbContainer.ConnectionString));
+        });
+    }
 
     public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
     {
@@ -62,7 +68,7 @@ public partial class Testing
 
     public static async Task ResetState()
     {
-        var defaultConnection = _container.ConnectionString;
+        var defaultConnection = _dbContainer.ConnectionString;
 
         await using var conn = new NpgsqlConnection(defaultConnection);
 
@@ -80,7 +86,7 @@ public partial class Testing
 
         return await context.FindAsync<TEntity>(keyValues);
     }
-
+    
     public static async Task AddAsync<TEntity>(TEntity entity)
         where TEntity : class
     {
@@ -104,7 +110,7 @@ public partial class Testing
 
         await context.SaveChangesAsync();
     }
-
+    
     public static async Task<int> CountAsync<TEntity>() where TEntity : class
     {
         using IServiceScope scope = _scopeFactory.CreateScope();
@@ -113,10 +119,9 @@ public partial class Testing
 
         return await context.Set<TEntity>().CountAsync();
     }
-
-    [OneTimeTearDown]
-    public async Task RunAfterAnyTests()
+    
+    public new async Task DisposeAsync()
     {
-        await _container.DisposeAsync();
+        await _dbContainer.StopAsync();
     }
 }
