@@ -9,9 +9,7 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var defaultConnection = configuration.GetConnectionString("DefaultConnection");
-
-        services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(defaultConnection));
+        services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 

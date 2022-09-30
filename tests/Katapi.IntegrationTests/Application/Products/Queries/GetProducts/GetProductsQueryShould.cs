@@ -4,7 +4,7 @@ using Domain.Entities;
 using FluentAssertions;
 using Xunit;
 
-namespace Application.IntegrationTests.XUnit.Products.Queries.GetProducts;
+namespace Application.IntegrationTests.XUnit.Application.Products.Queries.GetProducts;
 
 using static KatapiFactory;
 

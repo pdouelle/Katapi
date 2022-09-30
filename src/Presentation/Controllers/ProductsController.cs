@@ -22,8 +22,6 @@ public sealed class ProductsController : ApiControllerBase
     {
         IEnumerable<Product> resources = await Mediator.Send(query, cancellationToken);
 
-        var dto = resources.Adapt<List<ProductDto>>();
-
-        return dto;
+        return resources.Adapt<List<ProductDto>>();
     }
 }

@@ -68,9 +68,7 @@ public sealed class KatapiFactory : WebApplicationFactory<IApiMarker>, IAsyncLif
 
     public static async Task ResetState()
     {
-        var defaultConnection = _container.ConnectionString;
-
-        await using var conn = new NpgsqlConnection(defaultConnection);
+        await using var conn = new NpgsqlConnection(_container.ConnectionString);
 
         await conn.OpenAsync();
 
