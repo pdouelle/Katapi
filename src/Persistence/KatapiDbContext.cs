@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistance;
 
-public class ApplicationDbContext : DbContext, IApplicationDbContext
+public class KatapiDbContext : DbContext, IApplicationDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    public KatapiDbContext(DbContextOptions<KatapiDbContext> options) : base(options)
     {
     }
 

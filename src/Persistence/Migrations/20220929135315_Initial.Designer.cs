@@ -11,7 +11,7 @@ using Persistance;
 
 namespace Persistance.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(KatapiDbContext))]
     [Migration("20220929135315_Initial")]
     partial class Initial
     {

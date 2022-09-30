@@ -52,8 +52,8 @@ public sealed class KatapiFactory : WebApplicationFactory<IApiMarker>, IAsyncLif
     {
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
-            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(_container.ConnectionString));
+            services.RemoveAll(typeof(DbContextOptions<KatapiDbContext>));
+            services.AddDbContext<KatapiDbContext>(options => options.UseNpgsql(_container.ConnectionString));
         });
     }
 
@@ -80,7 +80,7 @@ public sealed class KatapiFactory : WebApplicationFactory<IApiMarker>, IAsyncLif
     {
         using IServiceScope scope = _scopeFactory.CreateScope();
 
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<KatapiDbContext>();
 
         return await context.FindAsync<TEntity>(keyValues);
     }
@@ -90,7 +90,7 @@ public sealed class KatapiFactory : WebApplicationFactory<IApiMarker>, IAsyncLif
     {
         using IServiceScope scope = _scopeFactory.CreateScope();
 
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<KatapiDbContext>();
 
         context.Add(entity);
 
@@ -102,7 +102,7 @@ public sealed class KatapiFactory : WebApplicationFactory<IApiMarker>, IAsyncLif
     {
         using IServiceScope scope = _scopeFactory.CreateScope();
 
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<KatapiDbContext>();
 
         context.AddRange(entities);
 
@@ -113,7 +113,7 @@ public sealed class KatapiFactory : WebApplicationFactory<IApiMarker>, IAsyncLif
     {
         using IServiceScope scope = _scopeFactory.CreateScope();
 
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<KatapiDbContext>();
 
         return await context.Set<TEntity>().CountAsync();
     }

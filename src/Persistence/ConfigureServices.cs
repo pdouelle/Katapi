@@ -9,11 +9,11 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<KatapiDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+        services.AddScoped<IApplicationDbContext, KatapiDbContext>();
 
-        services.AddScoped<ApplicationDbContextInitialiser>();
+        services.AddScoped<KatapiDbContextInitialiser>();
 
         return services;
     }

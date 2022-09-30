@@ -5,12 +5,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Persistance;
 
-public sealed class ApplicationDbContextInitialiser
+public sealed class KatapiDbContextInitialiser
 {
-    private readonly ILogger<ApplicationDbContextInitialiser> _logger;
-    private readonly ApplicationDbContext _context;
+    private readonly ILogger<KatapiDbContextInitialiser> _logger;
+    private readonly KatapiDbContext _context;
 
-    public ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context)
+    public KatapiDbContextInitialiser(ILogger<KatapiDbContextInitialiser> logger, KatapiDbContext context)
     {
         _logger = logger;
         _context = context;
