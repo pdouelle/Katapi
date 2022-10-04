@@ -11,7 +11,7 @@ public static class ConfigureServices
     {
         services.AddDbContext<KatapiDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<IApplicationDbContext, KatapiDbContext>();
+        services.AddScoped<IKatapiDbContext, KatapiDbContext>();
 
         services.AddScoped<KatapiDbContextInitialiser>();
 

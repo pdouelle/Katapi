@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistance;
 
-public class KatapiDbContext : DbContext, IApplicationDbContext
+public class KatapiDbContext : DbContext, IKatapiDbContext
 {
     public KatapiDbContext(DbContextOptions<KatapiDbContext> options) : base(options)
     {

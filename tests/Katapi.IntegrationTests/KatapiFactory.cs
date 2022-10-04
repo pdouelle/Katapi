@@ -44,7 +44,7 @@ public sealed class KatapiFactory : WebApplicationFactory<IApiMarker>, IAsyncLif
                 "public"
             },
             DbAdapter = DbAdapter.Postgres,
-            TablesToIgnore = new Table[] { "__EFMigrationsHistory" }
+            TablesToIgnore = new Table[] { "__EFMigrationsHistory" },
         };
     }
 
@@ -68,11 +68,11 @@ public sealed class KatapiFactory : WebApplicationFactory<IApiMarker>, IAsyncLif
 
     public static async Task ResetState()
     {
-        await using var conn = new NpgsqlConnection(_container.ConnectionString);
+        await using var connection = new NpgsqlConnection(_container.ConnectionString);
 
-        await conn.OpenAsync();
+        await connection.OpenAsync();
 
-        await _checkpoint.Reset(conn);
+        await _checkpoint.Reset(connection);
     }
 
     public static async Task<TEntity?> FindAsync<TEntity>(params object[] keyValues)

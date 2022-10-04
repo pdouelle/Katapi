@@ -55,9 +55,9 @@ public sealed class KatapiDbContextInitialiser
                 .RuleFor(x => x.Price, f => decimal.Parse(f.Commerce.Price()))
                 .RuleFor(x => x.Weight, f => f.Random.Float(1, 100))
                 .Generate(3);
-
+        
             _context.Products.AddRange(products);
-
+        
             await _context.SaveChangesAsync();
         }
     }

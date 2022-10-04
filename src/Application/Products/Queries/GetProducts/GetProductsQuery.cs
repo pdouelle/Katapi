@@ -9,11 +9,11 @@ public sealed class GetProductsQuery : IRequest<IEnumerable<Product>>
 {
 }
 
-public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, IEnumerable<Product>>
+public sealed class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, IEnumerable<Product>>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IKatapiDbContext _context;
 
-    public GetProductsQueryHandler(IApplicationDbContext context)
+    public GetProductsQueryHandler(IKatapiDbContext context)
     {
         _context = context;
     }
